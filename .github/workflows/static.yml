@@ -1,0 +1,35 @@
+name: Docker Compose Up
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get -yqq install docker-compose
+          docker-compose --version
+
+      - name: Build and Run Docker Compose
+        run: |
+          docker-compose up -d
+
+      - name: Deploy to GitHub Pages
+        run: |
+          echo "Deploying to GitHub Pages..."
+          mkdir gh-pages
+          cp -r * gh-pages
+          cd gh-pages
+          git init
+          git add .
+          git commit -m "Deploy to GitHub Pages"
+          git push -f https://github.com/${{ github.repository }}.git gh-pages:gh-pages
+          
